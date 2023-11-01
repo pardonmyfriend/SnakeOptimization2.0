@@ -33,7 +33,7 @@
             Random rnd = new Random();
 
             // searching for values
-            double FBest = 0;
+            double FBest = 0.0;
 
             // constant variables
             double[] vecflag = { 1, -1 };
@@ -315,7 +315,6 @@
                     XBest = XBestFemale.ToArray();
                 }
             }
-
 
             return (XBest, FBest, funCallCounter);
         }

@@ -19,5 +19,7 @@ namespace SnakeOptimization
         public string WartośćFunkcjiCelu { get; set; }
         public string OdchylenieStandardoweWartościFunkcjiCelu { get; set; }
         public string WskaźnikZmiennościWartościFunkcjiCelu { get; set; }
+        public string LiczbaWywołańFunkcjiCelu { get; set; }
+        public string CzasDziałania { get; set; }
     }
 }
