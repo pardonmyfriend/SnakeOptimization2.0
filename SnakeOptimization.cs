@@ -25,29 +25,28 @@
             this.xmin = _xmin;
             this.xmax = _xmax;
 
+            this.Name = "SO";
             this.XBest = new double[dim];
+            this.FBest = 0.0;
+            this.NumberOfEvaluationFitnessFunction = 0;
         }
 
-        public (double[], double, int) Solve()
+        public double Solve()
         {
             Random rnd = new Random();
 
-            // searching for values
-            double FBest = 0.0;
-
-            // constant variables
+            // Constant variables
             double[] vecflag = { 1, -1 };
             double treshold1 = 0.25;
             double treshold2 = 0.6;
             double c1 = 0.5;
             double c2 = 0.05;
             double c3 = 2;
-            int funCallCounter = 0;
 
             double[][] X = new double[N][];
             double[] fitness = new double[N];
 
-            // Initialize snake swarm and calculate fitness of each snake by objective function
+            // Initialize snake swarm and calculate fitness of each snake
             for (int i = 0; i < N; i++)
             {
                 X[i] = new double[dim];
@@ -56,13 +55,13 @@
                     X[i][j] = xmin[j] + rnd.NextDouble() * (xmax[j] - xmin[j]);
                 }
                 fitness[i] = function(X[i]);
-                funCallCounter++;
+                NumberOfEvaluationFitnessFunction++;
             }
 
-            // Get food position (Ffood)
+            // Get food position (Xfood)
             double bestSnake_fitValue = fitness.Min();
             int bestSnake_fitValue_index = Array.IndexOf(fitness, bestSnake_fitValue);
-            double[] XBest = X[bestSnake_fitValue_index].ToArray();
+            XBest = X[bestSnake_fitValue_index].ToArray();
 
             // Divide the swarm
             int Nm = N / 2;
@@ -254,7 +253,7 @@
                     }
 
                     double y = function(Xnewm[i]);
-                    funCallCounter++;
+                    NumberOfEvaluationFitnessFunction++;
                     if (y < male_fitness[i])
                     {
                         male_fitness[i] = y;
@@ -278,7 +277,7 @@
                     }
 
                     double y = function(Xnewf[i]);
-                    funCallCounter++;
+                    NumberOfEvaluationFitnessFunction++;
                     if (y < female_fitness[i])
                     {
                         female_fitness[i] = y;
@@ -316,7 +315,7 @@
                 }
             }
 
-            return (XBest, FBest, funCallCounter);
+            return FBest;
         }
     }
 }
