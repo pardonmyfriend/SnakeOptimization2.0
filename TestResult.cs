@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SnakeOptimization
 {
-    public class Result
+    public class TestResult
     {
         public string Algorytm { get; set; }
         public string FunkcjaTestowa { get; set; }
@@ -15,11 +15,9 @@ namespace SnakeOptimization
         public int RozmiarPopulacji { get; set; }
         public string ZnalezioneMinimum { get; set; }
         public string OdchylenieStandardowePoszukiwanychParametrów { get; set; }
-        public string WskaźnikZmiennościPoszukiwanychParametrów { get; set; }
-        public string WartośćFunkcjiCelu { get; set; }
-        public string OdchylenieStandardoweWartościFunkcjiCelu { get; set; }
-        public string WskaźnikZmiennościWartościFunkcjiCelu { get; set; }
-        public string LiczbaWywołańFunkcjiCelu { get; set; }
-        public string CzasDziałania { get; set; }
+        public double WartośćFunkcjiCelu { get; set; }
+        public double OdchylenieStandardoweWartościFunkcjiCelu { get; set; }
+        public int LiczbaWywołańFunkcjiCelu { get; set; }
+        public string CzasEgzekucji { get; set; }
     }
 }
