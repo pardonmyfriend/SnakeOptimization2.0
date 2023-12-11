@@ -1,39 +1,101 @@
-﻿namespace SnakeOptimization
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SnakeOptimization
 {
-    delegate double Function(params double[] x);
+    public delegate double fitnessFunction(params double[] x);
 
     class SnakeOptimization : IOptimizationAlgorithm
     {
-        private int N { get; set; }
-        private int T { get; set; }
-        private Function function { get; set; }
-        private int dim { get; set; }
-        private double[] xmin { get; set; }
-        private double[] xmax { get; set; }
-
         public string Name { get; set; }
+        public ParamInfo[] ParamsInfo { get; set; }
+        public IStateWriter writer { get; set; }
+        public IStateReader reader { get; set; }
         public double[] XBest { get; set; }
         public double FBest { get; set; }
         public int NumberOfEvaluationFitnessFunction { get; set; }
 
-        public SnakeOptimization(int _N, int _T, Function _function, int _dim, double[] _xmin, double[] _xmax)
+        public SnakeOptimization()
         {
-            this.N = _N;
-            this.T = _T;
-            this.function = _function;
-            this.dim = _dim;
-            this.xmin = _xmin;
-            this.xmax = _xmax;
+            Name = "Snake Optimization";
 
-            this.Name = "SO";
-            this.XBest = new double[dim];
-            this.FBest = 0.0;
-            this.NumberOfEvaluationFitnessFunction = 0;
+            ParamsInfo = new ParamInfo[]
+            {
+                new ParamInfo
+                {
+                    Name = "N",
+                    Description = "Rozmiar populacji",
+                    Step = 10.0,
+                    UpperBoundary = 100.0,
+                    LowerBoundary = 10.0
+                },
+                new ParamInfo
+                {
+                    Name = "T",
+                    Description = "Liczba iteracji",
+                    Step = 10.0,
+                    UpperBoundary = 100.0,
+                    LowerBoundary = 10.0
+                }
+            };
+
+            writer = new StateWriter();
+            reader = new StateReader();
         }
 
-        public double Solve()
+        public void Solve(fitnessFunction f, double[,] domain, params double[] parameters)
         {
+            int dim = domain.GetLength(1);
+
+            double[] xmin = new double[dim];
+            for (int i = 0; i < dim; i++)
+            {
+                xmin[i] = domain[0, i];
+            }
+
+            double[] xmax = new double[dim];
+            for (int i = 0; i < dim; i++)
+            {
+                xmax[i] = domain[1, i];
+            }
+
+            int N = (int)parameters[0];
+            int T = (int)parameters[1];
+            int tStart = 1;
+
             Random rnd = new Random();
+
+            double[][] X = new double[N][];
+            double[] fitness = new double[N];
+
+            if (File.Exists("state.txt"))
+            {
+                AlgorithmState algorithmState = reader.LoadFromFileStateOfAlgorithm("state.txt");
+
+                tStart = algorithmState.IterationNumber + 1;
+                NumberOfEvaluationFitnessFunction = algorithmState.NumberOfEvaluationFitnessFunction;
+                X = algorithmState.Population;
+                fitness = algorithmState.Fitness;
+            }
+            else
+            {
+                NumberOfEvaluationFitnessFunction = 0;
+
+                // Initialize snake swarm and calculate fitness of each snake
+                for (int i = 0; i < N; i++)
+                {
+                    X[i] = new double[dim];
+                    for (int j = 0; j < dim; j++)
+                    {
+                        X[i][j] = xmin[j] + rnd.NextDouble() * (xmax[j] - xmin[j]);
+                    }
+                    fitness[i] = f(X[i]);
+                    NumberOfEvaluationFitnessFunction++;
+                }
+            }
 
             // Constant variables
             double[] vecflag = { 1, -1 };
@@ -42,21 +104,6 @@
             double c1 = 0.5;
             double c2 = 0.05;
             double c3 = 2;
-
-            double[][] X = new double[N][];
-            double[] fitness = new double[N];
-
-            // Initialize snake swarm and calculate fitness of each snake
-            for (int i = 0; i < N; i++)
-            {
-                X[i] = new double[dim];
-                for (int j = 0; j < dim; j++)
-                {
-                    X[i][j] = xmin[j] + rnd.NextDouble() * (xmax[j] - xmin[j]);
-                }
-                fitness[i] = function(X[i]);
-                NumberOfEvaluationFitnessFunction++;
-            }
 
             // Get food position (Xfood)
             double bestSnake_fitValue = fitness.Min();
@@ -93,7 +140,7 @@
                 Xnewf[i] = new double[dim];
             }
 
-            for (int t = 1; t <= T; t++)
+            for (int t = tStart; t <= T; t++)
             {
                 // Calculate temperature
                 double Temp = Math.Exp(-(double)t / T);
@@ -252,7 +299,7 @@
                         }
                     }
 
-                    double y = function(Xnewm[i]);
+                    double y = f(Xnewm[i]);
                     NumberOfEvaluationFitnessFunction++;
                     if (y < male_fitness[i])
                     {
@@ -276,7 +323,7 @@
                         }
                     }
 
-                    double y = function(Xnewf[i]);
+                    double y = f(Xnewf[i]);
                     NumberOfEvaluationFitnessFunction++;
                     if (y < female_fitness[i])
                     {
@@ -313,9 +360,52 @@
                     FBest = bestFemale_fitValue;
                     XBest = XBestFemale.ToArray();
                 }
+
+                for (int i = 0; i < Xm.GetLength(0); i++)
+                {
+                    for (int j = 0; j < Xm.GetLength(1); j++)
+                    {
+                        X[i][j] = Xm[i][j];
+                    }
+                }
+
+                for (int i = 0; i < Xf.GetLength(0); i++)
+                {
+                    for (int j = 0; j < Xf.GetLength(1); j++)
+                    {
+                        X[i + Xm.GetLength(0)][j] = Xm[i][j];
+                    }
+                }
+
+                for (int i = 0; i < male_fitness.Length; i++)
+                {
+                    fitness[i] = male_fitness[i];
+                }
+
+                for (int i = 0; i < female_fitness.Length; i++)
+                {
+                    fitness[i + male_fitness.Length] = female_fitness[i];
+                }
+
+                AlgorithmState algorithmState = new AlgorithmState
+                {
+                    IterationNumber = t,
+                    NumberOfEvaluationFitnessFunction = NumberOfEvaluationFitnessFunction,
+                    Population = X,
+                    Fitness = fitness
+                };
+
+                writer.SaveToFileStateOfAlgorithm("state.txt", algorithmState);
             }
 
-            return FBest;
+            try
+            {
+                File.Delete("state.txt");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Wystąpił błąd podczas usuwania pliku: {ex.Message}");
+            }
         }
     }
 }

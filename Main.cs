@@ -24,7 +24,16 @@ namespace SnakeOptimization
             testFunctions.Add(new RastriginFunction(dim));
             testFunctions.Add(new SphereFunction(dim));
 
-            TestRunner.RunTests(T, N, testFunctions);
+            IOptimizationAlgorithm optimizationAlgorithm = new SnakeOptimization();
+
+            List<double[]> parameters = new double[optimizationAlgorithm.ParamsInfo.Length];
+
+            foreach (var paramInfo in optimizationAlgorithm.ParamsInfo)
+            {
+
+            }
+
+            TestRunner.RunTests(T, N, testFunctions, optimizationAlgorithm);
         }
     }
 }

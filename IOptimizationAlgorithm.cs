@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 
 namespace SnakeOptimization
 {
-    internal interface IOptimizationAlgorithm
+    public interface IOptimizationAlgorithm
     {
         string Name { get; set; }
-        double Solve();
+        void Solve(fitnessFunction f, double[,] domain, params double[] parameters);
+        ParamInfo[] ParamsInfo { get; set; }
+        IStateWriter writer { get; set; }
+        IStateReader reader { get; set; }
         double[] XBest { get; set; }
         double FBest { get; set; }
         int NumberOfEvaluationFitnessFunction { get; set; }

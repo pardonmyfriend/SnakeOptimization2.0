@@ -11,15 +11,27 @@ namespace SnakeOptimization
     {
         public string Name { get; set; }
         public int Dim { get; set; }
-        public double[] Xmin { get; set; }
-        public double[] Xmax { get; set; }
+        public double[,] Domain { get; set; }
 
         public SphereFunction(int _dim)
         {
             Name = "Funkcja sferyczna";
             Dim = _dim;
-            Xmin = Enumerable.Repeat(-5.0, _dim).ToArray();
-            Xmax = Enumerable.Repeat(5.0, _dim).ToArray();
+
+            Domain = new double[2, _dim];
+
+            for (int i = 0; i < _dim; i++)
+            {
+                Domain[0, i] = -5.0;
+            }
+
+            for (int i = 0; i < _dim; i++)
+            {
+                Domain[1, i] = 5.0;
+            }
+            //Dim = _dim;
+            //Xmin = Enumerable.Repeat(-5.0, _dim).ToArray();
+            //Xmax = Enumerable.Repeat(5.0, _dim).ToArray();
         }
 
         public double Calculate(params double[] X)

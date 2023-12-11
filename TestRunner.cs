@@ -11,7 +11,7 @@ namespace SnakeOptimization
 {
     public class TestRunner
     {
-        public static void RunTests(int[] T, int[] N, List<ITestFunction> testFunctions)
+        public static void RunTests(int[] T, int[] N, List<ITestFunction> testFunctions, IOptimizationAlgorithm optimizationAlgorithm)
         {
             string reportFilePath = "report.csv";
 
@@ -19,29 +19,21 @@ namespace SnakeOptimization
 
             foreach (var testFunction in testFunctions)
             {
+                
+
+
                 foreach (var t in T)
                 {
                     foreach (var n in N)
                     {
-                        SnakeOptimization snakeOptimization = new SnakeOptimization(
-                            _N: n,
-                            _T: t,
-                            _function: testFunction.Calculate,
-                            _dim: testFunction.Dim,
-                            _xmin: testFunction.Xmin,
-                            _xmax: testFunction.Xmax
-                        );
-
                         double[,] bestData = new double[testFunction.Dim + 1, 10];
                         int numberOfEvaluationFitnessFunction = 0;
                         string executionTime = "";
 
                         for (int i = 0; i < 10; i++)
                         {
-                            double fBest;
-
                             var watch = System.Diagnostics.Stopwatch.StartNew();
-                            fBest = snakeOptimization.Solve();
+                            optimizationAlgorithm.Solve(testFunction.Calculate, testFunction.Domain, );
                             watch.Stop();
 
                             var elapsedMs = watch.ElapsedMilliseconds;
@@ -49,11 +41,11 @@ namespace SnakeOptimization
 
                             for (int j = 0; j < testFunction.Dim; j++)
                             {
-                                bestData[j, i] = snakeOptimization.XBest[j];
+                                bestData[j, i] = optimizationAlgorithm.XBest[j];
                             }
 
-                            bestData[testFunction.Dim, i] = fBest;
-                            numberOfEvaluationFitnessFunction = snakeOptimization.NumberOfEvaluationFitnessFunction;
+                            bestData[testFunction.Dim, i] = optimizationAlgorithm.FBest;
+                            numberOfEvaluationFitnessFunction = optimizationAlgorithm.NumberOfEvaluationFitnessFunction;
                         }
 
                         double minFunction = bestData[testFunction.Dim, 0];

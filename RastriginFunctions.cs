@@ -4,15 +4,28 @@
     {
         public string Name { get; set; }
         public int Dim { get; set; }
-        public double[] Xmin { get; set; }
-        public double[] Xmax { get; set; }
+        public double[,] Domain { get; set; }
 
         public RastriginFunction(int _dim)
         {
             Name = "Funkcja Rastrigina";
             Dim = _dim;
-            Xmin = Enumerable.Repeat(-5.12, _dim).ToArray();
-            Xmax = Enumerable.Repeat(5.12, _dim).ToArray();
+
+            Domain = new double[2, _dim];
+
+            for (int i = 0; i < _dim; i++)
+            {
+                Domain[0, i] = -5.12;
+            }
+
+            for (int i = 0; i < _dim; i++)
+            {
+                Domain[1, i] = 5.12;
+            }
+
+            //Dim = _dim;
+            //Xmin = Enumerable.Repeat(-5.12, _dim).ToArray();
+            //Xmax = Enumerable.Repeat(5.12, _dim).ToArray();
         }
 
         public double Calculate(params double[] X)
