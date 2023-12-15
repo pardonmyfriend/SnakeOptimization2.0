@@ -10,8 +10,8 @@ namespace SnakeOptimization
     public class Main
     {
         // properties
-        public static int[] T = { 5, 10, 20, 40, 60, 80 };
-        public static int[] N = { 10, 20, 40, 80 };
+        public static int[] T = { 20, 40, 60, 80 };
+        public static int[] N = { 20, 40, 60, 80, 100 };
         public static int dim = 2;
 
         //retries
@@ -26,14 +26,30 @@ namespace SnakeOptimization
 
             IOptimizationAlgorithm optimizationAlgorithm = new SnakeOptimization();
 
-            List<double[]> parameters = new double[optimizationAlgorithm.ParamsInfo.Length];
+            List<TestParam> testParams = new List<TestParam>();
+            testParams.Add(new TestParam(80, 20, 20));
+            testParams.Add(new TestParam(100, 20, 20));
 
-            foreach (var paramInfo in optimizationAlgorithm.ParamsInfo)
+            List<double[]> paramsList = new List<double[]>();
+
+            foreach (var testParam in testParams)
             {
+                int size = (int)((testParam.UpperBoundry -  testParam.LowerBoundry) / testParam.Step) + 1;
 
+                double[] param = new double[size];
+
+                int i = 0;
+
+                for(var val = testParam.LowerBoundry; val <= testParam.UpperBoundry; val += testParam.Step)
+                {
+                    param[i] = val;
+                    i++;
+                }
+
+                paramsList.Add(param);
             }
 
-            TestRunner.RunTests(T, N, testFunctions, optimizationAlgorithm);
+            TestRunner.RunTests(testFunctions, optimizationAlgorithm, paramsList);
         }
     }
 }

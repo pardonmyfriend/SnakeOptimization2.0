@@ -11,7 +11,7 @@ namespace SnakeOptimization
 {
     public class TestRunner
     {
-        public static void RunTests(int[] T, int[] N, List<ITestFunction> testFunctions, IOptimizationAlgorithm optimizationAlgorithm)
+        public static void RunTests(List<ITestFunction> testFunctions, IOptimizationAlgorithm optimizationAlgorithm, List<double[]> paramsList)
         {
             string reportFilePath = "report.csv";
 
@@ -19,8 +19,7 @@ namespace SnakeOptimization
 
             foreach (var testFunction in testFunctions)
             {
-                
-
+                //jak iterować po paramsList tak żeby to działało jak poniżej
 
                 foreach (var t in T)
                 {
@@ -111,7 +110,7 @@ namespace SnakeOptimization
 
                         TestResult testResult = new TestResult
                         {
-                            Algorytm = snakeOptimization.Name,
+                            Algorytm = optimizationAlgorithm.Name,
                             FunkcjaTestowa = testFunction.Name,
                             LiczbaSzukanychParametrów = testFunction.Dim,
                             LiczbaIteracji = t,

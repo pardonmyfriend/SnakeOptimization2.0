@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace SnakeOptimization
 {
-    internal class AlgorithmState
+    public class AlgorithmState
     {
+        public int IterationNumber { get; set; }
+        public int NumberOfEvaluationFitnessFunction { get; set; }
+        public double[][] Population { get; set; }
+        public double[] Fitness { get; set; }
     }
 }

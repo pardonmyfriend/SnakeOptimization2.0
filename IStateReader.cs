@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace SnakeOptimization
 {
-    internal interface IStateReader
+    public interface IStateReader
     {
+        AlgorithmState LoadFromFileStateOfAlgorithm(string path);
     }
 }

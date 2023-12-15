@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace SnakeOptimization
 {
-    internal interface IStateWriter
+    public interface IStateWriter
     {
+        void SaveToFileStateOfAlgorithm(string path, AlgorithmState algorithmState);
     }
 }

@@ -28,7 +28,6 @@ namespace SnakeOptimization
                 {
                     Name = "N",
                     Description = "Rozmiar populacji",
-                    Step = 10.0,
                     UpperBoundary = 100.0,
                     LowerBoundary = 10.0
                 },
@@ -36,7 +35,6 @@ namespace SnakeOptimization
                 {
                     Name = "T",
                     Description = "Liczba iteracji",
-                    Step = 10.0,
                     UpperBoundary = 100.0,
                     LowerBoundary = 10.0
                 }
