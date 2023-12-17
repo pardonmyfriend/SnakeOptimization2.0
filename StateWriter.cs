@@ -23,11 +23,11 @@ namespace SnakeOptimization
                     }
                 }
 
-                Console.WriteLine($"Plik {path} został pomyślnie zapisany.");
+                //Console.WriteLine($"Plik {path} został pomyślnie zapisany.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Wystąpił błąd podczas zapisu do pliku: {ex.Message}");
+                //Console.WriteLine($"Wystąpił błąd podczas zapisu do pliku: {ex.Message}");
             }
         }
     }

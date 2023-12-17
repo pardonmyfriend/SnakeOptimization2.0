@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+using iTextSharp.text.pdf.parser;
 
 namespace SnakeOptimization
 {
@@ -14,6 +16,8 @@ namespace SnakeOptimization
         public ParamInfo[] ParamsInfo { get; set; }
         public IStateWriter writer { get; set; }
         public IStateReader reader { get; set; }
+        public IGenerateTextReport stringReportGenerator { get; set; }
+        public IGeneratePDFReport pdfReportGenerator { get; set; }
         public double[] XBest { get; set; }
         public double FBest { get; set; }
         public int NumberOfEvaluationFitnessFunction { get; set; }
@@ -42,11 +46,16 @@ namespace SnakeOptimization
 
             writer = new StateWriter();
             reader = new StateReader();
+            pdfReportGenerator = new GeneratePDFReport();
         }
 
         public void Solve(fitnessFunction f, double[,] domain, params double[] parameters)
         {
             int dim = domain.GetLength(1);
+
+            XBest = new double[dim];
+            FBest = 0.0;
+            NumberOfEvaluationFitnessFunction = 0;
 
             double[] xmin = new double[dim];
             for (int i = 0; i < dim; i++)
@@ -359,19 +368,19 @@ namespace SnakeOptimization
                     XBest = XBestFemale.ToArray();
                 }
 
-                for (int i = 0; i < Xm.GetLength(0); i++)
+                for (int i = 0; i < Nm; i++)
                 {
-                    for (int j = 0; j < Xm.GetLength(1); j++)
+                    for (int j = 0; j < dim; j++)
                     {
                         X[i][j] = Xm[i][j];
                     }
                 }
 
-                for (int i = 0; i < Xf.GetLength(0); i++)
+                for (int i = 0; i < Nf; i++)
                 {
-                    for (int j = 0; j < Xf.GetLength(1); j++)
+                    for (int j = 0; j < dim; j++)
                     {
-                        X[i + Xm.GetLength(0)][j] = Xm[i][j];
+                        X[i + Nm][j] = Xm[i][j];
                     }
                 }
 
@@ -394,6 +403,24 @@ namespace SnakeOptimization
                 };
 
                 writer.SaveToFileStateOfAlgorithm("state.txt", algorithmState);
+
+                string reportString = $@"Najlepszy osobnik: ({string.Join("; ", XBest)})
+Wartosc funkcji celu dla najlepszego osobnika: {FBest}
+Liczba wywolan funkcji celu: {NumberOfEvaluationFitnessFunction}
+Liczba iteracji: {parameters[0]}
+Rozmiar populacji: {parameters[1]}";
+
+                stringReportGenerator = new GenerateTextReport(reportString);
+
+                Console.WriteLine(stringReportGenerator.ReportString);
+
+                string reportsFolder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports");
+                Directory.CreateDirectory(reportsFolder);
+                //string path = System.IO.Path.Combine(reportsFolder, $"Report_{parameters[0]}_{parameters[1]}.pdf");
+                string path = System.IO.Path.Combine(reportsFolder, $"Report_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+
+                pdfReportGenerator.GenerateReport(path, reportString);
+
             }
 
             try

@@ -10,12 +10,12 @@ namespace SnakeOptimization
     public class Main
     {
         // properties
-        public static int[] T = { 20, 40, 60, 80 };
-        public static int[] N = { 20, 40, 60, 80, 100 };
+        //public static int[] T = { 20, 40, 60, 80 };
+        //public static int[] N = { 20, 40, 60, 80, 100 };
         public static int dim = 2;
 
         //retries
-        public static int n = 10;
+        //public static int n = 10;
 
         public static void main()
         {
@@ -26,10 +26,12 @@ namespace SnakeOptimization
 
             IOptimizationAlgorithm optimizationAlgorithm = new SnakeOptimization();
 
+            // to tworze gdy dostane z frontu jakie użytkownik chce upper boundry, lower boundry i step dla parametru
             List<TestParam> testParams = new List<TestParam>();
+            testParams.Add(new TestParam(60, 20, 20));
             testParams.Add(new TestParam(80, 20, 20));
-            testParams.Add(new TestParam(100, 20, 20));
 
+            // tutaj na podstawie podanych danych tworze tablice wartości dla parametrów i zapisuje wszystko w jednj liście
             List<double[]> paramsList = new List<double[]>();
 
             foreach (var testParam in testParams)
